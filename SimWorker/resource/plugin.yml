@@ -1,0 +1,5 @@
+ name: SimWorker
+ main: com.mengcraft.rpg.SimWorker
+ version: 0.1.0
+ author: mengcraft.com
+ website: http://www.mengcraft.com/
