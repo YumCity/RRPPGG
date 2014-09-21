@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -79,11 +80,16 @@ public class SimWorker extends JavaPlugin {
         }
 
         @EventHandler
+        private void onReSpawn(PlayerRespawnEvent event) {
+            event.getPlayer().setFoodLevel(4);
+        }
+
+        @EventHandler
         private void onAttack(EntityDamageByEntityEvent event) {
             if (event.getDamager() instanceof Player) {
-                Player damager = (Player) event.getDamager();
-                addPoint(damager.getName());
-                event.setDamage(event.getDamage() * damager.getFoodLevel() / 20);
+                Player attacker = (Player) event.getDamager();
+                addPoint(attacker.getName());
+                event.setDamage(event.getDamage() * attacker.getFoodLevel() / 20);
             }
             if (event.getEntity() instanceof Player) {
                 Player entity = (Player) event.getEntity();
