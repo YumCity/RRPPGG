@@ -1,3 +1,4 @@
 Config:
-  LowFood: 5
-  ActTime: 30
+  ReSpawnHealth: 5
+  LowFoodsLevel: 5
+  TimeOutByTick: 120
