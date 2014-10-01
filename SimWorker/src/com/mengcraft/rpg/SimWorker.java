@@ -24,8 +24,16 @@ import java.util.HashMap;
  */
 
 public class SimWorker extends JavaPlugin {
+
+    private static SimWorker simWorker;
+
+    public static SimWorker getInstance() {
+        return simWorker;
+    }
+
     @Override
     public void onLoad() {
+        simWorker = this;
         saveDefaultConfig();
     }
 
@@ -69,16 +77,14 @@ public class SimWorker extends JavaPlugin {
 
         @EventHandler
         private void onReSpawn(PlayerRespawnEvent event) {
-            Integer food = deathMap.remove(event.getPlayer().getName());
-            if (food != null) {
-                event.getPlayer().setFoodLevel(food > 0 ? food : 1);
-                event.getPlayer().setHealth(getConfig().getDouble("Config.ReSpawnHealth", 5));
+            if (deathMap.containsKey(event.getPlayer().getName())) {
+                getServer().getScheduler().runTaskLater(getInstance(), new SetFoodTask(event.getPlayer()), 1);
             }
         }
 
         @EventHandler(priority = EventPriority.MONITOR)
         public void onDead(PlayerDeathEvent event) {
-            if (event.getEntity().isDead()) {
+            if (event.getEntity().getHealth() < 1) {
                 deathMap.put(event.getEntity().getName(), event.getEntity().getFoodLevel());
             }
         }
@@ -108,6 +114,20 @@ public class SimWorker extends JavaPlugin {
             if (event.getPlayer().getFoodLevel() < getConfig().getInt("Config.LowFoodsLevel", 5)) {
                 event.getPlayer().sendMessage(ChatColor.RED + "你已经没力气放置方块了");
                 event.setCancelled(true);
+            }
+        }
+
+        private class SetFoodTask implements Runnable {
+            private final Player player;
+
+            public SetFoodTask(Player player) {
+                this.player = player;
+            }
+
+            @Override
+            public void run() {
+                player.setFoodLevel(deathMap.remove(player.getName()));
+                player.setHealth(getConfig().getDouble("Config.ReSpawnHealth", 5));
             }
         }
     }
