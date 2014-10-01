@@ -2,3 +2,8 @@ name: SimWorker
 main: com.mengcraft.rpg.SimWorker
 version: 0.1.4
 website: http://www.mengcraft.com/
+
+permissions:
+  worker.bypass:
+    description: Do not restore food and health after re-spawn.
+    default: false

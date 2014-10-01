@@ -77,7 +77,7 @@ public class SimWorker extends JavaPlugin {
 
         @EventHandler
         private void onReSpawn(PlayerRespawnEvent event) {
-            if (deathMap.containsKey(event.getPlayer().getName())) {
+            if (!event.getPlayer().hasPermission("worker.bypass") && deathMap.containsKey(event.getPlayer().getName())) {
                 getServer().getScheduler().runTaskLater(getInstance(), new SetFoodTask(event.getPlayer()), 1);
             }
         }
