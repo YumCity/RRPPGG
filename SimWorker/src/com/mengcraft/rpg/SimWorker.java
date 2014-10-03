@@ -1,6 +1,7 @@
 package com.mengcraft.rpg;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,15 +26,11 @@ import java.util.HashMap;
 
 public class SimWorker extends JavaPlugin {
 
-    private static SimWorker simWorker;
-
-    public static SimWorker getInstance() {
-        return simWorker;
-    }
+    private Plugin plugin;
 
     @Override
     public void onLoad() {
-        simWorker = this;
+        this.plugin = this;
         saveDefaultConfig();
     }
 
@@ -71,14 +68,16 @@ public class SimWorker extends JavaPlugin {
         @Override
         public void run() {
             for (Player player : getServer().getOnlinePlayers()) {
-                player.setFoodLevel(player.getFoodLevel() - 1);
+                if (player.getGameMode() != GameMode.CREATIVE) {
+                    player.setFoodLevel(player.getFoodLevel() - 1);
+                }
             }
         }
 
         @EventHandler
         private void onReSpawn(PlayerRespawnEvent event) {
             if (!event.getPlayer().hasPermission("worker.bypass") && deathMap.containsKey(event.getPlayer().getName())) {
-                getServer().getScheduler().runTaskLater(getInstance(), new SetFoodTask(event.getPlayer()), 1);
+                getServer().getScheduler().runTaskLater(plugin, new SetFoodTask(event.getPlayer()), 1);
             }
         }
 
