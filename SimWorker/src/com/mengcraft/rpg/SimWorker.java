@@ -68,7 +68,7 @@ public class SimWorker extends JavaPlugin {
         @Override
         public void run() {
             for (Player player : getServer().getOnlinePlayers()) {
-                if (player.getGameMode() != GameMode.CREATIVE) {
+                if (player.getFoodLevel() > 0 && player.getGameMode() != GameMode.CREATIVE) {
                     player.setFoodLevel(player.getFoodLevel() - 1);
                 }
             }
