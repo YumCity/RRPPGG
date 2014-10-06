@@ -18,6 +18,7 @@ import org.mcstats.Metrics;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Created by zmy on 14-9-1.
@@ -38,7 +39,7 @@ public class SimWorker extends JavaPlugin {
     public void onEnable() {
         new Thread(new MetricsThread(this)).start();
         new SendAdvert().runTaskLater(this, 120);
-        WorkerListener listener = new WorkerListener();
+        Events listener = new Events();
         getServer().getPluginManager().registerEvents(listener, this);
         getServer().getScheduler().runTaskTimer(this, listener
                 , getConfig().getInt("Config.TimeOutByTick", 1200)
@@ -57,19 +58,23 @@ public class SimWorker extends JavaPlugin {
         }
     }
 
-    private class WorkerListener implements Listener, Runnable {
+    private class Events implements Listener, Runnable {
 
         private final HashMap<String, Integer> deathMap;
 
-        public WorkerListener() {
+        public Events() {
             this.deathMap = new HashMap<String, Integer>();
         }
 
         @Override
         public void run() {
             for (Player player : getServer().getOnlinePlayers()) {
-                if (player.getFoodLevel() > 0 && player.getGameMode() != GameMode.CREATIVE) {
-                    player.setFoodLevel(player.getFoodLevel() - 1);
+                if (player.getFoodLevel() > 5 && player.getGameMode() != GameMode.CREATIVE) {
+                    if (player.getFoodLevel() > 10) {
+                        player.setFoodLevel(player.getFoodLevel() - 1);
+                    } else if (new Random().nextBoolean()) {
+                        player.setFoodLevel(player.getFoodLevel() - 1);
+                    }
                 }
             }
         }

@@ -3,9 +3,6 @@ package com.mengcraft.rpg;
 import net.milkbowl.vault.chat.Chat;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -106,8 +103,8 @@ public class RedName extends JavaPlugin {
         private final HashMap<String, ItemStack[]> armorMap;
 
         private Listener() {
-            inventoryMap = new HashMap<>();
-            armorMap = new HashMap<>();
+            inventoryMap = new HashMap<String, ItemStack[]>();
+            armorMap = new HashMap<String, ItemStack[]>();
         }
 
         @EventHandler
@@ -128,13 +125,13 @@ public class RedName extends JavaPlugin {
                     && event.getDamager() instanceof Player;
             if (isPlayer) {
                 Player player = (Player) event.getEntity();
-                Player damager = (Player) event.getDamager();
+                Player attacker = (Player) event.getDamager();
                 isPlayer = getPoint(player) < 1
-                        && getPoint(damager) < 1;
+                        && getPoint(attacker) < 1;
                 if (isPlayer) {
                     String message = ChatColor.RED + "你攻击善良的玩家, 获得 +1 罪恶值";
-                    damager.sendMessage(message);
-                    setPoint(damager, 1);
+                    attacker.sendMessage(message);
+                    setPoint(attacker, 1);
                 }
             }
         }
@@ -170,7 +167,7 @@ public class RedName extends JavaPlugin {
                     checkPoint(killer);
                 }
             }
-            setPoint(player, point - 5);
+            setPoint(player, point - 2);
             new ReSpawnPlayer(player).runTaskLater(getInstance(), 60);
         }
 
@@ -194,15 +191,19 @@ public class RedName extends JavaPlugin {
         }
 
         private class ReSpawnPlayer extends BukkitRunnable {
-            private final Player player;
+            private final String name;
 
             public ReSpawnPlayer(Player player) {
-                this.player = player;
+                this.name = player.getName();
             }
 
             @Override
             public void run() {
-                player.spigot().respawn();
+                try {
+                    getServer().getPlayerExact(name).spigot().respawn();
+                } catch (Exception e) {
+                    getLogger().info("Not support auto re spawn on this server!");
+                }
             }
         }
     }
